@@ -14,16 +14,17 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/Packetify/ipcalc"
 )
 
 func main() {
 
 	myip := ipcalc.New("192.168.1.102/24")
+
 	brdIP := myip.GetBroadCastIP()
-    netIP := myip.GetNetworkAddr()
-    fmt.Println(myip,brdIP,netIP)
+	netIP := myip.GetNetworkAddr()
+	
+	fmt.Println(myip,brdIP,netIP)
 }
 
 ```
@@ -33,7 +34,7 @@ package main
 
 import (
 	"fmt"
-    "net"
+	"net"
 	"github.com/Packetify/ipcalc"
 )
 
@@ -47,8 +48,8 @@ func main() {
     myip := ipcalc.New(ipInfo)
 
 	brdIP := myip.GetBroadCastIP()
-    netIP := myip.GetNetworkAddr()
-    fmt.Println(myip,brdIP,netIP)
+	netIP := myip.GetNetworkAddr()
+	fmt.Println(myip,brdIP,netIP)
 }
 
 ```
