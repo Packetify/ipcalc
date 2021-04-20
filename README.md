@@ -44,8 +44,8 @@ func main() {
 		IP:   net.IP{192, 168, 1, 1},
 		Mask: net.IPMask{255, 255, 255, 0},
 	}
-
-    myip := ipcalc.New(ipInfo)
+	
+	myip := ipcalc.New(ipInfo)
 
 	brdIP := myip.GetBroadCastIP()
 	netIP := myip.GetNetworkAddr()
