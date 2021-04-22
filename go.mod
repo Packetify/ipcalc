@@ -1,3 +1,3 @@
-module github.com/packetify/ipcalc
+module github.com/Packetify/ipcalc
 
 go 1.16
