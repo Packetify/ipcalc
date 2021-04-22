@@ -56,3 +56,27 @@ func (ipcalc *IPCalc) GetValidHosts() int {
 	netMaskLen, _ := ipcalc.Mask.Size()
 	return int(math.Pow(2, float64(32-netMaskLen))) - 2
 }
+
+func (ipcalc *IPCalc) GetClass() byte {
+	octet1 := ipcalc.IP[0]
+
+	isInRange := func(number, a, b byte) bool {
+		if number >= a && number <= b {
+			return true
+		}
+		return false
+	}
+	switch {
+	case isInRange(octet1, 0, 127):
+		return 'A'
+	case isInRange(octet1, 128, 191):
+		return 'B'
+	case isInRange(octet1, 192, 223):
+		return 'C'
+	case isInRange(octet1, 224, 239):
+		return 'D'
+	case isInRange(octet1, 240, 255):
+		return 'E'
+	}
+	return 1
+}
