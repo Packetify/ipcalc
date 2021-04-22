@@ -2,6 +2,7 @@ package ipv4calc
 
 import (
 	"encoding/binary"
+	"fmt"
 	"math"
 	"net"
 )
@@ -17,11 +18,12 @@ func New(IPNet interface{}) IPCalc {
 	}
 
 	if ipInfo, ok := IPNet.(string); ok == true {
-		_, IPCIDR, err := net.ParseCIDR(ipInfo)
+		theIP, IPCIDR, err := net.ParseCIDR(ipInfo)
+
 		if err != nil {
 			panic(err)
 		}
-		res = IPCalc{IPCIDR}
+		res = IPCalc{&net.IPNet{IP: theIP, Mask: IPCIDR.Mask}}
 	}
 
 	if ipInfo, ok := IPNet.(net.IP); ok == true {
@@ -79,4 +81,20 @@ func (ipcalc *IPCalc) GetClass() byte {
 		return 'E'
 	}
 	return 1
+}
+
+func (ipcalc *IPCalc) GetMinHost() net.IP {
+	resIP := make(net.IP, len(ipcalc.IP.To4()))
+	ipbin := binary.BigEndian.Uint32(ipcalc.GetNetworkAddr().To4()) + 1
+	binary.BigEndian.PutUint32(resIP, ipbin)
+	return resIP
+}
+
+func (ipcalc *IPCalc) ToString() string {
+	outSTR := fmt.Sprintf("Address:\t%s\n", ipcalc.IP.String())
+	outSTR += fmt.Sprintf("Netmask:\t%s\n", net.IP(ipcalc.Mask).To4())
+	outSTR += fmt.Sprintf("Brodcast:\t%s\n", ipcalc.GetBroadCastIP().String())
+	outSTR += fmt.Sprintf("Network:\t%s\n", ipcalc.GetNetworkAddr().String())
+	outSTR += fmt.Sprintf("Hosts:\t%d\tclass:%c\n", ipcalc.GetValidHosts(), ipcalc.GetClass())
+	return outSTR
 }
