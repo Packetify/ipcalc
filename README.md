@@ -4,7 +4,7 @@ IP Calculator Package Written in Go
 ## Install
 
 ```bash
-go get -u github.com/Packetify/ipcalc
+go get -u github.com/Packetify/ipcalc/ipv4calc
 ```
 
 ## Example
@@ -14,12 +14,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/Packetify/ipcalc"
+	"github.com/Packetify/ipcalc/ipv4calc"
 )
 
 func main() {
 
-	myip := ipcalc.New("192.168.1.102/24")
+	myip := ipv4calc.New("192.168.1.102/24")
 
 	brdIP := myip.GetBroadCastIP()
 	netIP := myip.GetNetworkAddr()
@@ -35,7 +35,7 @@ package main
 import (
 	"fmt"
 	"net"
-	"github.com/Packetify/ipcalc"
+	"github.com/Packetify/ipcalc/ipv4calc"
 )
 
 func main() {
@@ -45,7 +45,7 @@ func main() {
 		Mask: net.IPMask{255, 255, 255, 0},
 	}
 	
-	myip := ipcalc.New(ipInfo)
+	myip := ipv4calc.New(ipInfo)
 
 	brdIP := myip.GetBroadCastIP()
 	netIP := myip.GetNetworkAddr()
