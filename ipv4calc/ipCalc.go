@@ -1,4 +1,4 @@
-package ipcalc
+package ipv4calc
 
 import (
 	"encoding/binary"
