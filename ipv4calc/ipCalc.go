@@ -95,6 +95,52 @@ func (ipcalc *IPCalc) ToString() string {
 	outSTR += fmt.Sprintf("Netmask:\t%s\n", net.IP(ipcalc.Mask).To4())
 	outSTR += fmt.Sprintf("Brodcast:\t%s\n", ipcalc.GetBroadCastIP().String())
 	outSTR += fmt.Sprintf("Network:\t%s\n", ipcalc.GetNetworkAddr().String())
-	outSTR += fmt.Sprintf("Hosts:\t%d\tclass:%c\n", ipcalc.GetValidHosts(), ipcalc.GetClass())
+	outSTR += fmt.Sprintf("Hosts:\t%d class:%c\n", ipcalc.GetValidHosts(), ipcalc.GetClass())
+	outSTR += fmt.Sprintf("lookup:\t%s\n", ipcalc.LookUp())
+	return outSTR
+}
+
+func IsPrivate(ip net.IP) bool {
+	_, rng1, _ := net.ParseCIDR("10.0.0.0/8")
+	_, rng2, _ := net.ParseCIDR("172.16.0.0/12")
+	_, rng3, _ := net.ParseCIDR("192.168.0.0/16")
+	if rng1.Contains(ip) || rng2.Contains(ip) || rng3.Contains(ip) {
+		return true
+	}
+	return false
+}
+
+func IsAPIPA(ip net.IP) bool {
+	if _, rng1, _ := net.ParseCIDR("169.254.0.0/16"); rng1.Contains(ip) {
+		return true
+	}
+	return false
+}
+
+func IsLoopback(ip net.IP) bool {
+	if _, rng1, _ := net.ParseCIDR("127.0.0.0/8"); rng1.Contains(ip) {
+		return true
+	}
+	return false
+}
+
+func IsMulticast(ip net.IP) bool {
+	if _, rng1, _ := net.ParseCIDR("224.0.0.0/4"); rng1.Contains(ip) {
+		return true
+	}
+	return false
+}
+
+func (ipcalc IPCalc) LookUp() string {
+	outSTR := ""
+	if IsPrivate(ipcalc.IP) {
+		outSTR = "Private"
+	} else if IsMulticast(ipcalc.IP) {
+		outSTR = "Multicast"
+	} else if IsAPIPA(ipcalc.IP) {
+		outSTR = "APIPA"
+	} else if IsLoopback(ipcalc.IP) {
+		outSTR = "Loopback"
+	}
 	return outSTR
 }
