@@ -38,8 +38,8 @@ func New(IPNet interface{}) IPCalc {
 
 func (ipcalc *IPCalc) GetBroadCastIP() net.IP {
 	resIP := make(net.IP, len(ipcalc.IP.To4()))
-	wildcard := ^binary.BigEndian.Uint32(net.IP(ipcalc.Mask).To4())
-	binIP := binary.BigEndian.Uint32(ipcalc.IP.To4())
+	wildcard := ^IPToBinary(net.IP(ipcalc.Mask))
+	binIP := IPToBinary(ipcalc.IP)
 
 	binary.BigEndian.PutUint32(resIP, binIP|wildcard)
 	return resIP
@@ -47,8 +47,8 @@ func (ipcalc *IPCalc) GetBroadCastIP() net.IP {
 
 func (ipcalc *IPCalc) GetNetworkAddr() net.IP {
 	resIP := make(net.IP, len(ipcalc.IP.To4()))
-	subnetIP := binary.BigEndian.Uint32(net.IP(ipcalc.Mask).To4())
-	binIP := binary.BigEndian.Uint32(ipcalc.IP.To4())
+	subnetIP := IPToBinary(net.IP(ipcalc.Mask))
+	binIP := IPToBinary(ipcalc.IP)
 
 	binary.BigEndian.PutUint32(resIP, binIP&subnetIP)
 	return resIP
@@ -85,7 +85,7 @@ func (ipcalc *IPCalc) GetClass() byte {
 
 func (ipcalc *IPCalc) GetMinHost() net.IP {
 	resIP := make(net.IP, len(ipcalc.IP.To4()))
-	ipbin := binary.BigEndian.Uint32(ipcalc.GetNetworkAddr().To4()) + 1
+	ipbin := IPToBinary(ipcalc.GetNetworkAddr()) + 1
 	binary.BigEndian.PutUint32(resIP, ipbin)
 	return resIP
 }
@@ -143,4 +143,8 @@ func (ipcalc IPCalc) LookUp() string {
 		outSTR = "Loopback"
 	}
 	return outSTR
+}
+
+func IPToBinary(ip net.IP) uint32 {
+	return binary.BigEndian.Uint32(ip.To4())
 }
