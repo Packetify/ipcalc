@@ -60,7 +60,7 @@ func (ipcalc *IPCalc) GetValidHosts() int {
 }
 
 func (ipcalc *IPCalc) GetClass() byte {
-	octet1 := ipcalc.IP[0]
+	octet1 := ipcalc.IP.To4()[0]
 
 	isInRange := func(number, a, b byte) bool {
 		if number >= a && number <= b {
@@ -91,12 +91,11 @@ func (ipcalc *IPCalc) GetMinHost() net.IP {
 }
 
 func (ipcalc *IPCalc) ToString() string {
-	outSTR := fmt.Sprintf("Address:\t%s\n", ipcalc.IP.String())
-	outSTR += fmt.Sprintf("Netmask:\t%s\n", net.IP(ipcalc.Mask).To4())
-	outSTR += fmt.Sprintf("Brodcast:\t%s\n", ipcalc.GetBroadCastIP().String())
-	outSTR += fmt.Sprintf("Network:\t%s\n", ipcalc.GetNetworkAddr().String())
-	outSTR += fmt.Sprintf("Hosts:\t%d class:%c\n", ipcalc.GetValidHosts(), ipcalc.GetClass())
-	outSTR += fmt.Sprintf("lookup:\t%s\n", ipcalc.LookUp())
+	outSTR := fmt.Sprintf("Address:\t%s\t%s\n", ipcalc.IP.String(),IPToBinarySTR(ipcalc.IP))
+	outSTR += fmt.Sprintf("Netmask:\t%s\t%s\n", net.IP(ipcalc.Mask).To4(),IPToBinarySTR(net.IP(ipcalc.Mask)))
+	outSTR += fmt.Sprintf("Brodcast:\t%s\t%s\n", ipcalc.GetBroadCastIP().String(),IPToBinarySTR(ipcalc.GetBroadCastIP()))
+	outSTR += fmt.Sprintf("Network:\t%s\t%s\n", ipcalc.GetNetworkAddr().String(),IPToBinarySTR(ipcalc.GetNetworkAddr()))
+	outSTR += fmt.Sprintf("Hosts:\t\t%d \t\tclass %c,%s\n", ipcalc.GetValidHosts(), ipcalc.GetClass(),ipcalc.LookUp())
 	return outSTR
 }
 
@@ -147,4 +146,20 @@ func (ipcalc IPCalc) LookUp() string {
 
 func IPToBinary(ip net.IP) uint32 {
 	return binary.BigEndian.Uint32(ip.To4())
+}
+
+func IPToBinarySTR(ip net.IP) string {
+	IPBinSTR := fmt.Sprintf("%b",binary.BigEndian.Uint32(ip.To4()))
+	octetCount :=0
+	var resSTR string
+	for bit:=0 ;bit<len(IPBinSTR);bit++{
+		octetCount++
+		resSTR=resSTR+string(IPBinSTR[bit])
+		if octetCount ==8 && bit!=len(IPBinSTR)-1{
+			octetCount=0
+			resSTR+="."
+		}
+
+	}
+	return resSTR
 }
