@@ -2,6 +2,7 @@ package ipv4calc
 
 import (
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"math"
 	"net"
@@ -12,9 +13,13 @@ type IPCalc struct {
 }
 
 func New(IPNet interface{}) IPCalc {
-	var res IPCalc
+
 	if ipInfo, ok := IPNet.(net.IPNet); ok == true {
-		res = IPCalc{&ipInfo}
+		return IPCalc{&ipInfo}
+	}
+
+	if ipInfo, ok := IPNet.(*net.IPNet); ok == true {
+		return IPCalc{ipInfo}
 	}
 
 	if ipInfo, ok := IPNet.(string); ok == true {
@@ -23,7 +28,7 @@ func New(IPNet interface{}) IPCalc {
 		if err != nil {
 			panic(err)
 		}
-		res = IPCalc{&net.IPNet{IP: theIP, Mask: IPCIDR.Mask}}
+		return IPCalc{&net.IPNet{IP: theIP, Mask: IPCIDR.Mask}}
 	}
 
 	if ipInfo, ok := IPNet.(net.IP); ok == true {
@@ -31,9 +36,9 @@ func New(IPNet interface{}) IPCalc {
 			IP:   ipInfo,
 			Mask: ipInfo.DefaultMask(),
 		}
-		res = IPCalc{&newIPNet}
+		return IPCalc{&newIPNet}
 	}
-	return res
+	panic(errors.New("error while create New ipcalc instance"))
 }
 
 func (ipcalc *IPCalc) GetBroadCastIP() net.IP {
